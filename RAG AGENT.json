@@ -1,0 +1,396 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1gSFQ_3nC06lJGAhKCM7wLIZmm32C-o9B",
+          "mode": "list",
+          "cachedResultName": "100 Plumbing Questions",
+          "cachedResultUrl": "https://drive.google.com/file/d/1gSFQ_3nC06lJGAhKCM7wLIZmm32C-o9B/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        256,
+        320
+      ],
+      "id": "7315c48a-3fe9-441d-a862-39280ef85989",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4qTFgal8eva72lE1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        320
+      ],
+      "id": "b77809bf-c56b-4834-bd87-9564d36b82a3",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        704,
+        544
+      ],
+      "id": "4da9a666-b388-4014-96dc-6dc86bbec76d",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IYTeTOkVCsAMAg5v",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        544
+      ],
+      "id": "94553f3f-d010-49bf-8c92-84dfd9835fa0",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        912,
+        752
+      ],
+      "id": "3e6e075e-e16d-45ac-965e-29de0683b04a",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        960
+      ],
+      "id": "5fa3763f-86e2-4984-bbab-725cf5a26ec3",
+      "name": "When chat message received",
+      "webhookId": "7cf7d5fb-a2cf-4530-a8bc-1b5c1bcc4952"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You're an intelligent customer service bot that website chatbot inquiries, and your goal is to retrieve the best answer in the connected vector database.\n\n### Tools \n1. Vector Database Store. Call this tool when the user has a question about our company.\n\n### Rules\n1. Do not give out answers without consulting the vector database attached to the AI agent. Always find the solution or answer in the vector database attached to the AI agent under tools.\n\nPlease sound formal and friendly, also do not include in your response that your answer is coming from a vector database, let it feel natural."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        312,
+        960
+      ],
+      "id": "f58d4abd-44ee-4424-86db-39dfe73dceae",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        256,
+        1184
+      ],
+      "id": "5b4ea3fa-8d6f-41d6-b694-81fb10265e4b",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "MHlUcwVOs1wF41YQ",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        1184
+      ],
+      "id": "c9d41fae-5daa-477f-b551-33710456b862",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        592,
+        1392
+      ],
+      "id": "f026d7fa-8411-4cc9-a6cd-02ab4775a173",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IYTeTOkVCsAMAg5v",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1iEM1gTJds0Smwfm3FXQH7mOSftIDGrJm",
+          "mode": "list",
+          "cachedResultName": "Test",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1iEM1gTJds0Smwfm3FXQH7mOSftIDGrJm"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        320
+      ],
+      "id": "4d751409-785b-4c46-bfd6-b404e02bf796",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4qTFgal8eva72lE1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-lesson",
+          "mode": "list",
+          "cachedResultName": "n8n-lesson"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        320
+      ],
+      "id": "81b4cab8-b9bf-476a-8378-3a7be4eeeb5e",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "1x3DHpzjS09ale7N",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool when the user wants to query questions about the company. This vector store will provide answers to customer questions",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-lesson",
+          "mode": "list",
+          "cachedResultName": "n8n-lesson"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        1184
+      ],
+      "id": "74365f4a-657f-417e-b0e3-67501526967b",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "1x3DHpzjS09ale7N",
+          "name": "PineconeApi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7a02aa11-2b46-4526-87c4-1583f3b79cad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "54b06315817fd07df4927ca7349fea37606eb75294a247e231fd9d13aa12f311"
+  },
+  "id": "JWJXIgtfdI3ueKfL",
+  "tags": []
+}
